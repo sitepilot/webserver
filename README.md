@@ -1,8 +1,8 @@
 # Web Server (with PHP7.2)
 
 ## Installed software
-* Nginx 
-* PHP-FPM 7.2
+* Openlitespeed 
+* LSPHP 7.2
 * Composer
 * PHPunit
 * WPCLI

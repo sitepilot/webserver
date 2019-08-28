@@ -11,9 +11,10 @@ generate() {
 }
 
 log "Generating configuration files..."
-generate /conf/nginx/nginx.conf /etc/nginx/nginx.conf 
-generate /conf/nginx/default.conf /etc/nginx/conf.d/default.conf
-generate /conf/php/www.conf /etc/php/$PHP_VER/php-fpm.d/www.conf
+mkdir -p /usr/local/lsws/conf/vhosts/app 
+generate /conf/webserver/httpd_config.conf /usr/local/lsws/conf/httpd_config.conf
+generate /conf/webserver/vhconf.conf /usr/local/lsws/conf/vhosts/app/vhconf.conf
+generate /conf/webserver/sitepilot.ini /usr/local/lsws/lsphp72/etc/php/7.2/mods-available/00-sitepilot.ini
 
 log "Updating user ID and GID..."
 groupmod -g $WEBSERVER_USER_GID $WEBSERVER_USER_NAME
@@ -21,7 +22,8 @@ usermod -u $WEBSERVER_USER_ID $WEBSERVER_USER_NAME
 
 log "Updating file permissions..."
 chown -R $WEBSERVER_USER_NAME:$WEBSERVER_USER_NAME /var/www
-chown -R $WEBSERVER_USER_NAME:$WEBSERVER_USER_NAME /var/tmp/nginx
+chown -R $WEBSERVER_USER_NAME:$WEBSERVER_USER_NAME /tmp/lshttpd
+chown -R lsadm:lsadm /usr/local/lsws/conf
 
 # Start cronjobs
 CRONFILE=/conf/crontabs/app

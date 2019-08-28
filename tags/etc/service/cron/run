@@ -1,6 +1,4 @@
 #!/bin/sh
 
 exec 2>&1
-source /env
-
-exec /usr/sbin/crond -f
+exec cron -f -l
