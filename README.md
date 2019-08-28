@@ -5,6 +5,7 @@
 * PHP-FPM 7.2
 * Composer
 * PHPunit
+* WPCLI
 * Certbot (Let's Encrypt)
 
 ## Configuration
