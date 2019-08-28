@@ -76,6 +76,7 @@ ARG DEPS="\
         php$PHP_VER-posix \
         php$PHP_VER-fpm \
         php$PHP_VER-pdo_mysql \
+        php$PHP_VER-mysqli \
         curl \
         ca-certificates \
         runit \
