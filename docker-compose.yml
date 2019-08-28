@@ -4,10 +4,10 @@ services:
 
   webserver:
     image: sitepilot/webserver:test
+    container_name: webserver
     ports:
       - "80:80"
       - "443:443"
-      - "7080:7080"
     restart: always
     environment:
       WEBSERVER_USER_ID: 1000
