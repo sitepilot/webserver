@@ -1,13 +1,13 @@
-FROM alpine:3.9
+FROM ubuntu:18.04
 MAINTAINER Sitepilot <support@sitepilot.io>
 
 LABEL org.label-schema.vendor="Sitepilot" \
       org.label-schema.name="webserver" \
-      org.label-schema.description="Web server docker image with PHP and Nginx." \
+      org.label-schema.description="Web server docker image with PHP and Openlitespeed." \
       org.label-schema.url="https://sitepilot.io"
 
 # Build arguments
-ARG PHP_VER=7.2
+ARG PHP_VER="72"
 ARG PHP_VER=$PHP_VER
 ARG PHP_MEMORY_LIMIT=256M
 ARG PHP_UPLOAD_MAX_FILESIZE=32M
@@ -19,6 +19,7 @@ ARG WEBSERVER_DOCROOT=/var/www/html
 ARG WEBSERVER_SERVER_NAME=webserver
 ARG WEBSERVER_SSL_CERT=/conf/cert/default.crt
 ARG WEBSERVER_SSL_KEY=/conf/cert/default.key
+ARG DEBIAN_FRONTEND=noninteractive
 
 # Environment variables
 ENV PHP_VER=$PHP_VER
@@ -40,63 +41,44 @@ ENV PHP_INI_DIR=/etc/php/$PHP_VER
 # When using Composer, disable the warning about running commands as root/super user
 ENV COMPOSER_ALLOW_SUPERUSER=1
 
+# Enable openlitespeed repository
+RUN apt-get update \
+    && apt-get install -y wget \
+    && wget -O - http://rpms.litespeedtech.com/debian/enable_lst_debain_repo.sh | bash
+
 # Persistent runtime dependencies
 ARG DEPS="\
-        nginx \
-        nginx-mod-http-headers-more \
-        php$PHP_VER \
-        php$PHP_VER-phar \
-        php$PHP_VER-bcmath \
-        php$PHP_VER-calendar \
-        php$PHP_VER-mbstring \
-        php$PHP_VER-exif \
-        php$PHP_VER-ftp \
-        php$PHP_VER-openssl \
-        php$PHP_VER-zip \
-        php$PHP_VER-sysvsem \
-        php$PHP_VER-sysvshm \
-        php$PHP_VER-sysvmsg \
-        php$PHP_VER-shmop \
-        php$PHP_VER-sockets \
-        php$PHP_VER-zlib \
-        php$PHP_VER-bz2 \
-        php$PHP_VER-curl \
-        php$PHP_VER-simplexml \
-        php$PHP_VER-xml \
-        php$PHP_VER-opcache \
-        php$PHP_VER-dom \
-        php$PHP_VER-xmlreader \
-        php$PHP_VER-xmlwriter \
-        php$PHP_VER-tokenizer \
-        php$PHP_VER-ctype \
-        php$PHP_VER-session \
-        php$PHP_VER-fileinfo \
-        php$PHP_VER-iconv \
-        php$PHP_VER-json \
-        php$PHP_VER-posix \
-        php$PHP_VER-fpm \
-        php$PHP_VER-pdo_mysql \
-        php$PHP_VER-mysqli \
+        openlitespeed \
+        lsphp$PHP_VER \
+        lsphp$PHP_VER-mysql \
+        lsphp$PHP_VER-imap \
+        lsphp$PHP_VER-curl \
+        lsphp$PHP_VER-common \
+        lsphp$PHP_VER-json \
         curl \
-        ca-certificates \
         runit \
         nano \
-        bash \
         perl \
-        shadow \
         certbot \
-        su-exec \
+        cron \
+        ssmtp \
 "
 
-# PHP.earth Alpine repository for better developer experience
-ADD https://repos.php.earth/alpine/phpearth.rsa.pub /etc/apk/keys/phpearth.rsa.pub
-
 # Install packages
-RUN set -x \
-    && echo "https://repos.php.earth/alpine/v3.9" >> /etc/apk/repositories \
-    && apk add --no-cache $DEPS \
-    && ln -sf /dev/stdout /var/log/nginx/access.log \
-    && ln -sf /dev/stderr /var/log/nginx/error.log
+RUN set -e \
+    && apt-get update \
+    && apt-get install -y $DEPS \
+    && ln -s /usr/local/lsws/lsphp$PHP_VER/bin/php /usr/local/bin/php
+
+# Install su-exec
+RUN apt-get install gcc -y \
+    && cd /root/ \
+    && curl -fLo su-exec.c https://raw.githubusercontent.com/ncopa/su-exec/master/su-exec.c \
+    && gcc su-exec.c -o su-exec \
+    && mv su-exec /usr/local/bin/su-exec \
+    && rm su-exec.c \
+    && apt-get purge -y --auto-remove gcc \
+    && chmod u+s /usr/local/bin/su-exec
 
 # Install composer
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
@@ -118,10 +100,9 @@ RUN wget https://phar.phpunit.de/phpunit.phar \
 COPY tags /
 RUN chmod -R +x /sbin/*
 RUN chmod -R +x /etc/service/*
-RUN chmod u+s /sbin/su-exec
 
 # Cleanup
-RUN rm -rf /var/www/localhost
+RUN rm -rf /var/lib/apt/lists/*
 
 # Expose ports
 EXPOSE 80
@@ -144,7 +125,7 @@ RUN addgroup --gid "$WEBSERVER_USER_GID" "$WEBSERVER_USER_NAME" \
         --uid "$WEBSERVER_USER_ID" \
         "$WEBSERVER_USER_NAME"
 
-USER $WEBSERVER_USER_NAME
+#USER $WEBSERVER_USER_NAME
 
 # Set entrypoint
 ENTRYPOINT ["su-exec", "root", "/sbin/entrypoint"]

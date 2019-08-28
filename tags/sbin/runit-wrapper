@@ -4,8 +4,6 @@ main() {
   # Dump environment
   export > /env
 
-  trap onterm SIGTERM SIGINT
-
   echo "Starting runit"
   /sbin/runsvdir-start &
   wait "$!"
