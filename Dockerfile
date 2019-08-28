@@ -12,6 +12,7 @@ ARG PHP_VER=$PHP_VER
 ARG PHP_MEMORY_LIMIT=256M
 ARG PHP_UPLOAD_MAX_FILESIZE=32M
 ARG PHP_DISPLAY_ERRORS=on
+ARG WEBSERVER_USER_NAME=sitepilot
 ARG WEBSERVER_USER_ID=1000
 ARG WEBSERVER_USER_GID=1000
 ARG WEBSERVER_DOCROOT=/var/www/html
@@ -25,6 +26,7 @@ ENV PHP_MEMORY_LIMIT=$PHP_MEMORY_LIMIT
 ENV PHP_UPLOAD_MAX_FILESIZE=$PHP_UPLOAD_MAX_FILESIZE
 ENV PHP_POST_MAX_SIZE=$PHP_UPLOAD_MAX_FILESIZE
 ENV PHP_DISPLAY_ERRORS=$PHP_DISPLAY_ERRORS
+ENV WEBSERVER_USER_NAME=$WEBSERVER_USER_NAME
 ENV WEBSERVER_USER_ID=$WEBSERVER_USER_ID
 ENV WEBSERVER_USER_GID=$WEBSERVER_USER_GID
 ENV WEBSERVER_SERVER_NAME=$WEBSERVER_SERVER_NAME
@@ -82,6 +84,7 @@ ARG DEPS="\
         perl \
         shadow \
         certbot \
+        su-exec \
 "
 
 # PHP.earth Alpine repository for better developer experience
@@ -100,6 +103,11 @@ RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
     && mv composer.phar /usr/local/bin/composer \
     && php -r "unlink('composer-setup.php');"
 
+# Install WPCLi
+RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar \
+    && mv wp-cli.phar /usr/local/bin/wp \
+    && chmod +x /usr/local/bin/wp
+
 # Install PHPunit
 RUN wget https://phar.phpunit.de/phpunit.phar \
     && chmod +x phpunit.phar \
@@ -109,6 +117,7 @@ RUN wget https://phar.phpunit.de/phpunit.phar \
 COPY tags /
 RUN chmod -R +x /sbin/*
 RUN chmod -R +x /etc/service/*
+RUN chmod u+s /sbin/su-exec
 
 # Cleanup
 RUN rm -rf /var/www/localhost
@@ -123,8 +132,21 @@ WORKDIR /var/www/html
 # Set volumes
 VOLUME ["/var/www/html", "/var/www/log"]
 
+# Setup user
+RUN addgroup --gid "$WEBSERVER_USER_GID" "$WEBSERVER_USER_NAME" \
+    && adduser \
+        --disabled-password \
+        --gecos "" \
+        --home "/var/www/html" \
+        --ingroup "$WEBSERVER_USER_NAME" \
+        --no-create-home \
+        --uid "$WEBSERVER_USER_ID" \
+        "$WEBSERVER_USER_NAME"
+
+USER $WEBSERVER_USER_NAME
+
 # Set entrypoint
-ENTRYPOINT ["/sbin/entrypoint"]
+ENTRYPOINT ["su-exec", "root", "/sbin/entrypoint"]
 
 # Start services
-CMD ["/sbin/runit-wrapper"]
+CMD ["su-exec", "root", "/sbin/runit-wrapper"]
