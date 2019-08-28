@@ -1,0 +1,24 @@
+name: deploy
+
+on:
+  push:
+    branches:
+    - master
+    - github-actions
+
+jobs:
+
+  deploy:
+ 
+    runs-on: ubuntu-latest
+ 
+    steps:
+    - uses: actions/checkout@v1
+    - uses: "actions/docker/login@master"
+      env:
+        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+    - name: Build and deploy the Docker image
+      run: |
+      docker build . --file Dockerfile --tag sitepilot/webserver:latest
+      docker push sitepilot/webserver:latest
