@@ -125,7 +125,7 @@ RUN addgroup --gid "$WEBSERVER_USER_GID" "$WEBSERVER_USER_NAME" \
         --uid "$WEBSERVER_USER_ID" \
         "$WEBSERVER_USER_NAME"
 
-#USER $WEBSERVER_USER_NAME
+USER $WEBSERVER_USER_NAME
 
 # Set entrypoint
 ENTRYPOINT ["su-exec", "root", "/sbin/entrypoint"]
