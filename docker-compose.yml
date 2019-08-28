@@ -1,0 +1,14 @@
+version: '3.3'
+
+services:
+
+  webserver:
+    image: sitepilot/webserver:test
+    ports:
+      - "80:80"
+      - "443:443"
+      - "7080:7080"
+    restart: always
+    environment:
+      WEBSERVER_USER_ID: 1000
+      WEBSERVER_USER_GID: 1000

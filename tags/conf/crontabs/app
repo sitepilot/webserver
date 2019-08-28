@@ -1,0 +1,2 @@
+* * * * * echo "Hello world!" >> /var/www/log/cron.log 2>&1
+59 23 * * * rm -rf /var/www/log/cron.log && touch /var/www/log/cron.log
