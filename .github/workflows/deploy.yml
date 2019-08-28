@@ -20,6 +20,5 @@ jobs:
         DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
     - name: Build and deploy the Docker image
       run: |
-        docker login
         docker build . --file Dockerfile --tag sitepilot/webserver:latest
         docker push sitepilot/webserver:latest
