@@ -17,8 +17,8 @@ ARG WEBSERVER_USER_ID=1000
 ARG WEBSERVER_USER_GID=1000
 ARG WEBSERVER_DOCROOT=/var/www/html
 ARG WEBSERVER_SERVER_NAME=webserver
-ARG WEBSERVER_SSL_CERT=/conf/cert/default.crt
-ARG WEBSERVER_SSL_KEY=/conf/cert/default.key
+ARG WEBSERVER_SSL_CERT=/sitepilot/conf/cert/default.crt
+ARG WEBSERVER_SSL_KEY=/sitepilot/conf/cert/default.key
 ARG DEBIAN_FRONTEND=noninteractive
 
 # Environment variables
@@ -34,9 +34,7 @@ ENV WEBSERVER_SERVER_NAME=$WEBSERVER_SERVER_NAME
 ENV WEBSERVER_SSL_CERT=$WEBSERVER_SSL_CERT
 ENV WEBSERVER_SSL_KEY=$WEBSERVER_SSL_KEY
 ENV WEBSERVER_DOCROOT=$WEBSERVER_DOCROOT
-
-# PHP_INI_DIR to be symmetrical with official php docker image
-ENV PHP_INI_DIR=/etc/php/$PHP_VER
+ENV PHP_LSAPI_CHILDREN=35
 
 # When using Composer, disable the warning about running commands as root/super user
 ENV COMPOSER_ALLOW_SUPERUSER=1
@@ -98,21 +96,11 @@ RUN wget https://phar.phpunit.de/phpunit.phar \
 
 # Add configuration files
 COPY tags /
-RUN chmod -R +x /sbin/*
+RUN chmod -R +x /sitepilot/bin/*
 RUN chmod -R +x /etc/service/*
 
-# Cleanup
-RUN rm -rf /var/lib/apt/lists/*
-
-# Expose ports
-EXPOSE 80
-EXPOSE 443
-
-# Set workdir
-WORKDIR /var/www/html
-
-# Set volumes
-VOLUME ["/var/www/html", "/var/www/log"]
+# Clean up APT when done
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Setup user
 RUN addgroup --gid "$WEBSERVER_USER_GID" "$WEBSERVER_USER_NAME" \
@@ -127,8 +115,18 @@ RUN addgroup --gid "$WEBSERVER_USER_GID" "$WEBSERVER_USER_NAME" \
 
 USER $WEBSERVER_USER_NAME
 
+# Expose ports
+EXPOSE 80
+EXPOSE 443
+
+# Set workdir
+WORKDIR /var/www/html
+
+# Set volumes
+VOLUME ["/var/www/html", "/var/www/log"]
+
 # Set entrypoint
-ENTRYPOINT ["su-exec", "root", "/sbin/entrypoint"]
+ENTRYPOINT ["su-exec", "root", "/sitepilot/bin/entrypoint"]
 
 # Start services
-CMD ["su-exec", "root", "/sbin/runit-wrapper"]
+CMD ["su-exec", "root", "/sitepilot/bin/runit-wrapper"]

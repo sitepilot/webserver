@@ -12,9 +12,9 @@ generate() {
 
 log "Generating configuration files..."
 mkdir -p /usr/local/lsws/conf/vhosts/app 
-generate /conf/webserver/httpd_config.conf /usr/local/lsws/conf/httpd_config.conf
-generate /conf/webserver/vhconf.conf /usr/local/lsws/conf/vhosts/app/vhconf.conf
-generate /conf/webserver/sitepilot.ini /usr/local/lsws/lsphp72/etc/php/7.2/mods-available/00-sitepilot.ini
+generate /sitepilot/conf/webserver/httpd_config.conf /usr/local/lsws/conf/httpd_config.conf
+generate /sitepilot/conf/webserver/vhconf.conf /usr/local/lsws/conf/vhosts/app/vhconf.conf
+generate /sitepilot/conf/webserver/sitepilot.ini /usr/local/lsws/lsphp72/etc/php/7.2/mods-available/00-sitepilot.ini
 
 log "Updating user ID and GID..."
 groupmod -g $WEBSERVER_USER_GID $WEBSERVER_USER_NAME
@@ -26,7 +26,7 @@ chown -R $WEBSERVER_USER_NAME:$WEBSERVER_USER_NAME /tmp/lshttpd
 chown -R lsadm:lsadm /usr/local/lsws/conf
 
 # Start cronjobs
-CRONFILE=/conf/crontabs/app
+CRONFILE=/sitepilot/conf/crontabs/app
 if test -f "$CRONFILE"; then
     log "Loading crontab ($CRONFILE)..."
     crontab $CRONFILE

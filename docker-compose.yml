@@ -4,10 +4,10 @@ services:
 
   webserver:
     image: sitepilot/webserver:test
-    container_name: webserver
+    container_name: webserver-test
     ports:
-      - "81:80"
-      - "444:443"
+      - "8080:80"
+      - "8443:443"
       - "7081:7080"
     restart: always
     environment:
