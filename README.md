@@ -1,4 +1,8 @@
-# Web Server (with PHP7.2)
+# Web Server (Openlitespeed with PHP7.2)
+
+[![Actions Status](https://github.com/sitepilot/webserver/workflows/deploy/badge.svg)](https://github.com/sitepilot/webserver/actions)
+[![](https://images.microbadger.com/badges/version/sitepilot/webserver.svg)](https://cloud.docker.com/u/sitepilot/repository/docker/sitepilot/webserver)
+[![](https://images.microbadger.com/badges/image/sitepilot/webserver.svg)](https://cloud.docker.com/u/sitepilot/repository/docker/sitepilot/webserver)
 
 ## Installed software
 * Openlitespeed 
