@@ -36,4 +36,4 @@ Mount these folders to the host to prevent data loss:
 * `/etc/letsencrypt`: requested Let's Encrypt certificates will be stored here.
 
 ### Cronjobs
-Mount a crontab file to `/sitepilot/conf/crontabs/app`. The configured cronjobs in this file will be loaded automatically when the container starts.
+The default cronjob is configured to run the WordPress cron every minute. Mount a crontab file to `/sitepilot/conf/crontabs/app` if you would like to use / configure your own cronjobs (this file will be loaded automatically when the container starts).
