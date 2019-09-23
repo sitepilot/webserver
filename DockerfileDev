@@ -1,4 +1,4 @@
-ARG WEBSERVER_FROM_IMAGE=vanegmondgroep/webserver:latest
+ARG WEBSERVER_FROM_IMAGE=sitepilot/webserver:latest
 FROM $WEBSERVER_FROM_IMAGE
 
 # Install Xdebug
