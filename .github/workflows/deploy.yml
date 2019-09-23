@@ -20,6 +20,6 @@ jobs:
         docker build . --file Dockerfile --tag sitepilot/webserver:latest
         docker push sitepilot/webserver:latest
         # Build development image
-        docker build -t itepilot/webserver:dev-latest --build-arg sitepilot/webserver:latest -f DockerfileDev .
+        docker build -t sitepilot/webserver:dev-latest --build-arg sitepilot/webserver:latest -f DockerfileDev .
         docker push sitepilot/webserver:dev-latest
 
