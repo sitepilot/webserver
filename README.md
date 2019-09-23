@@ -14,6 +14,10 @@
 
 ## Configuration
 
+### Images
+* `sitepilot/webserver:latest` for production ready Docker image.
+* `sitepilot/webserver:dev-latest` for development ready Docker image (with Xdebug installed).
+
 ### Environment variables
 Use the environment variables below to change the web server and PHP settings.
 
