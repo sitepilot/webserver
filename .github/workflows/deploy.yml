@@ -19,3 +19,7 @@ jobs:
         echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
         docker build . --file Dockerfile --tag sitepilot/webserver:latest
         docker push sitepilot/webserver:latest
+        # Build development image
+        docker build -t itepilot/webserver:dev-latest --build-arg sitepilot/webserver:latest -f DockerfileDev .
+        docker push sitepilot/webserver:dev-latest
+

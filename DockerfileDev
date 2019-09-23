@@ -1,0 +1,13 @@
+ARG WEBSERVER_FROM_IMAGE=vanegmondgroep/webserver:latest
+FROM $WEBSERVER_FROM_IMAGE
+
+# Install Xdebug
+RUN su-exec root apt-get update  && \
+    su-exec root apt-get install -y lsphp$PHP_VER-pear && \
+    su-exec root /usr/local/lsws/lsphp$PHP_VER/bin/pecl install xdebug
+
+# Clean up APT when done
+RUN su-exec root apt-get clean && \
+    su-exec root rm -rf /var/lib/apt/lists/*
+
+ADD ./tags/sitepilot/conf/webserver/sitepilot-dev.ini /usr/local/lsws/lsphp72/etc/php/7.2/mods-available/00-sitepilot-dev.ini
