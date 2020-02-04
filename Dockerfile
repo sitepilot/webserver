@@ -53,6 +53,7 @@ ARG DEPS="\
         lsphp$PHP_VER-curl \
         lsphp$PHP_VER-common \
         lsphp$PHP_VER-json \
+        lsphp$PHP_VER-redis \
         curl \
         runit \
         nano \
