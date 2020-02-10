@@ -11,12 +11,10 @@ generate() {
 }
 
 log "Creating required directories..."
-mkdir -p /tmp/lshttpd
-mkdir -p /usr/local/lsws/conf/vhosts/app
-
-vhostFolders=( "/var/www/html" "/var/www/logs" "/var/www/tmp" )
-for i in "${vhostFolders[@]}"
+declare -a folders=("/tmp/lshttpd", "/usr/local/lsws/conf/vhosts/app", "/var/www/html" "/var/www/logs" "/var/www/tmp")
+for i in "${folders[@]}"
 do
+   log "Creating folder $i..."
    [ ! -d "$i" ] mkdir -p $i
 done
 
