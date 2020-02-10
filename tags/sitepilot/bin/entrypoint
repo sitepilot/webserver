@@ -29,7 +29,7 @@ file_env() {
 
 log "Creating required directories..."
 
-folders=("/run/secrets" "/tmp/lshttpd" "/usr/local/lsws/conf/vhosts/app" "/var/www/html" "/var/www/logs" "/var/www/tmp" "/var/www/cache")
+folders=("/run/secrets" "/tmp/lshttpd" "/usr/local/lsws/conf/vhosts/app" "/var/www/html" "/var/www/logs" "/var/www/tmp")
 for i in "${folders[@]}"
 do
    log "Creating folder $i..."
