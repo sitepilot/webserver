@@ -25,6 +25,15 @@ generate /sitepilot/conf/webserver/httpd_config.conf /usr/local/lsws/conf/httpd_
 generate /sitepilot/conf/webserver/vhconf.conf /usr/local/lsws/conf/vhosts/app/vhconf.conf
 generate /sitepilot/conf/ssmtp/ssmtp.conf /etc/ssmtp/ssmtp.conf
 
+if [[ $WP_INSTALL = "yes" ]]; then
+    if [ ! -f /var/www/html/index.php ]; then 
+        log "Installing WordPress..."
+        wp core download --path=/var/www/html --allow-root
+    else 
+        log "WordPress already installed, skipping installation..."
+    fi
+fi
+
 log "Updating user ID and GID..."
 groupmod -g $WEBSERVER_USER_GID $WEBSERVER_USER_NAME
 usermod -u $WEBSERVER_USER_ID $WEBSERVER_USER_NAME
