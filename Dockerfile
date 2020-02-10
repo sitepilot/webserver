@@ -82,16 +82,6 @@ RUN set -e \
     && apt-get install -y $DEPS \
     && ln -s /usr/local/lsws/lsphp$PHP_VER/bin/php /usr/local/bin/php
 
-# Install su-exec
-RUN apt-get install gcc -y \
-    && cd /root/ \
-    && curl -fLo su-exec.c https://raw.githubusercontent.com/ncopa/su-exec/master/su-exec.c \
-    && gcc su-exec.c -o su-exec \
-    && mv su-exec /usr/local/bin/su-exec \
-    && rm su-exec.c \
-    && apt-get purge -y --auto-remove gcc \
-    && chmod u+s /usr/local/bin/su-exec
-
 # Install composer
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
     && php composer-setup.php \
@@ -140,7 +130,7 @@ WORKDIR /var/www/html
 VOLUME ["/var/www/html", "/var/www/log"]
 
 # Set entrypoint
-ENTRYPOINT ["su-exec", "root", "/sitepilot/bin/entrypoint"]
+ENTRYPOINT ["/sitepilot/bin/entrypoint"]
 
 # Start services
-CMD ["su-exec", "root", "/sitepilot/bin/runit-wrapper"]
+CMD ["/sitepilot/bin/runit-wrapper"]
