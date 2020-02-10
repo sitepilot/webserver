@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 log() {
     echo "[sitepilot] $1"
 }
@@ -10,11 +10,57 @@ generate() {
     cat $SOURCE_FILE | perl -p -e 's/\$\{([^}]+)\}/defined $ENV{$1} ? $ENV{$1} : $&/eg' > $DEST_FILE
 }
 
+file_env() {
+	local var="$1"
+	local fileVar="${var}_FILE"
+	local def="${2:-}"
+	if [ "${!var:-}" ] && [ "${!fileVar:-}" ]; then
+		log "Both $var and $fileVar are set (but are exclusive)"
+	fi
+	local val="$def"
+	if [ "${!var:-}" ]; then
+		val="${!var}"
+	elif [ "${!fileVar:-}" ]; then
+		val="$(< "${!fileVar}")"
+	fi
+	export "$var"="$val"
+	unset "$fileVar"
+}
+
+log "Creating required directories..."
+
+folders=("/run/secrets" "/tmp/lshttpd" "/usr/local/lsws/conf/vhosts/app" "/var/www/html" "/var/www/logs" "/var/www/tmp")
+for i in "${folders[@]}"
+do
+   log "Creating folder $i..."
+   mkdir -p $i
+done
+
+if [ ! -f "$SMTP_AUTH_USER_FILE" ]; then 
+    log "Creating empty auth file: $SMTP_AUTH_USER_FILE..."
+    touch $SMTP_AUTH_USER_FILE
+fi
+file_env 'SMTP_AUTH_USER'
+
+if [ ! -f "$SMTP_AUTH_PASSWORD_FILE" ]; then 
+    log "Creating empty auth file: $SMTP_AUTH_PASSWORD_FILE..."
+    touch $SMTP_AUTH_PASSWORD_FILE
+fi
+file_env 'SMTP_AUTH_PASSWORD'
+
 log "Generating configuration files..."
-mkdir -p /usr/local/lsws/conf/vhosts/app 
 generate /sitepilot/conf/webserver/httpd_config.conf /usr/local/lsws/conf/httpd_config.conf
 generate /sitepilot/conf/webserver/vhconf.conf /usr/local/lsws/conf/vhosts/app/vhconf.conf
-generate /sitepilot/conf/webserver/sitepilot.ini /usr/local/lsws/lsphp72/etc/php/7.2/mods-available/00-sitepilot.ini
+generate /sitepilot/conf/ssmtp/ssmtp.conf /etc/ssmtp/ssmtp.conf
+
+if [[ $WP_INSTALL = "yes" ]]; then
+    if [ ! -f /var/www/html/index.php ]; then 
+        log "Installing WordPress..."
+        wp core download --path=/var/www/html --allow-root
+    else 
+        log "WordPress already installed, skipping installation..."
+    fi
+fi
 
 log "Updating user ID and GID..."
 groupmod -g $WEBSERVER_USER_GID $WEBSERVER_USER_NAME
