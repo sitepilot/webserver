@@ -34,8 +34,8 @@ Use the environment variables below to change the web server and PHP settings.
 |PHP_DISPLAY_ERRORS|Display PHP (programming) errors, default: `on`|
 |SMTP_DOMAIN|The address where the mail appears to come from for user authentication, default `mg.sitepilot.io`|
 |SMTP_SERVER|The address of the SMTP server, default `smtp.eu.mailgun.org:587`|
-|SMTP_AUTH_USER|The user used for SMTP authentication, default `postmaster@mg.sitepilot.io`|
-|SMTP_AUTH_PASSWORD|The password used for SMTP authentication, default ``|
+|SMTP_AUTH_USER_FILE|Load SMTP user from a docker secrets file, default `/run/secrets/smtp_auth_user`|
+|SMTP_AUTH_PASSWORD_FILE|Load SMTP password from a docker secrets file, default `/run/secrets/smtp_auth_password`|
 |WP_INSTALL|Install WordPress (if not already installed), default `no`|
 
 ### Ports

@@ -10,15 +10,38 @@ generate() {
     cat $SOURCE_FILE | perl -p -e 's/\$\{([^}]+)\}/defined $ENV{$1} ? $ENV{$1} : $&/eg' > $DEST_FILE
 }
 
+file_env() {
+	local var="$1"
+	local fileVar="${var}_FILE"
+	local def="${2:-}"
+	if [ "${!var:-}" ] && [ "${!fileVar:-}" ]; then
+		log "Both $var and $fileVar are set (but are exclusive)"
+	fi
+	local val="$def"
+	if [ "${!var:-}" ]; then
+		val="${!var}"
+	elif [ "${!fileVar:-}" ]; then
+		val="$(< "${!fileVar}")"
+	fi
+	export "$var"="$val"
+	unset "$fileVar"
+}
+
 log "Creating required directories..."
 
-folders=("/tmp/lshttpd" "/usr/local/lsws/conf/vhosts/app" "/var/www/html" "/var/www/logs" "/var/www/tmp")
+folders=("/run/secrets" "/tmp/lshttpd" "/usr/local/lsws/conf/vhosts/app" "/var/www/html" "/var/www/logs" "/var/www/tmp")
 
 for i in "${folders[@]}"
 do
    log "Creating folder $i..."
    mkdir -p $i
 done
+
+touch $SMTP_AUTH_USER_FILE
+file_env 'SMTP_AUTH_USER'
+
+touch $SMTP_AUTH_PASSWORD_FILE
+file_env 'SMTP_AUTH_PASSWORD'
 
 log "Generating configuration files..."
 generate /sitepilot/conf/webserver/httpd_config.conf /usr/local/lsws/conf/httpd_config.conf
