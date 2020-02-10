@@ -11,7 +11,7 @@ generate() {
 }
 
 log "Creating required directories..."
-declare -a folders=("/tmp/lshttpd", "/usr/local/lsws/conf/vhosts/app", "/var/www/html" "/var/www/logs" "/var/www/tmp")
+declare -a folders=("/tmp/lshttpd" "/usr/local/lsws/conf/vhosts/app" "/var/www/html" "/var/www/logs" "/var/www/tmp")
 for i in "${folders[@]}"
 do
    log "Creating folder $i..."
