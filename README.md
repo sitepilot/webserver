@@ -15,7 +15,6 @@
 
 ### Images
 * `sitepilot/webserver:latest` for production ready Docker image.
-* `sitepilot/webserver:dev-latest` for development ready Docker image (with Xdebug installed).
 
 ### Environment variables
 Use the environment variables below to change the web server and PHP settings.
@@ -28,9 +27,15 @@ Use the environment variables below to change the web server and PHP settings.
 |WEBSERVER_SERVER_NAME|Change the web server name, default: `webserver`|
 |WEBSERVER_SSL_CERT|Change the default web server ssl certificate, default: `/sitepilot/conf/cert/default.crt`|
 |WEBSERVER_SSL_KEY|Change the default web server ssl key, default: `/sitepilot/conf/cert/default.key`| 
+|PHP_TIMEZONE|Change the PHP timezone, default: `Europe\Amsterdam`|
 |PHP_MEMORY_LIMIT|Change the PHP memory limit, default: `256M`|
 |PHP_UPLOAD_MAX_FILESIZE|Change the PHP maximum upload filesize, default `32M`|
 |PHP_DISPLAY_ERRORS|Display PHP (programming) errors, default: `on`|
+|SMTP_DOMAIN|The address where the mail appears to come from for user authentication, default `mg.sitepilot.io`|
+|SMTP_SERVER|The address of the SMTP server, default `smtp.eu.mailgun.org:587`|
+|SMTP_AUTH_USER|The user used for SMTP authentication, default `postmaster@mg.sitepilot.io`|
+|SMTP_AUTH_PASSWORD|The password used for SMTP authentication, default ``|
+|WP_INSTALL|Install WordPress (if not already installed), default `no`|
 
 ### Ports
 Mount these ports to the host to get access to the web server:
