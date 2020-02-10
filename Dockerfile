@@ -74,6 +74,7 @@ ARG DEPS="\
     cron \
     ssmtp \
     less \
+    sudo \
     "
 
 # Install packages
@@ -115,7 +116,9 @@ RUN addgroup --gid "$WEBSERVER_USER_GID" "$WEBSERVER_USER_NAME" \
     --ingroup "$WEBSERVER_USER_NAME" \
     --no-create-home \
     --uid "$WEBSERVER_USER_ID" \
-    "$WEBSERVER_USER_NAME"
+    "$WEBSERVER_USER_NAME" \
+    && usermod -aG sudo $WEBSERVER_USER_NAME \
+    && echo "${WEBSERVER_USER_NAME} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 # Expose ports
 EXPOSE 80
@@ -124,11 +127,14 @@ EXPOSE 443
 # Set workdir
 WORKDIR /var/www/html
 
+# Set user
+USER $WEBSERVER_USER_NAME
+
 # Set volumes
 VOLUME ["/var/www/html", "/var/www/log"]
 
 # Set entrypoint
-ENTRYPOINT ["/sitepilot/bin/entrypoint"]
+ENTRYPOINT ["sudo /sitepilot/bin/entrypoint"]
 
 # Start services
-CMD ["/sitepilot/bin/runit-wrapper"]
+CMD ["sudo /sitepilot/bin/runit-wrapper"]
