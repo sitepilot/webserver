@@ -18,9 +18,9 @@ ARG SMTP_SERVER="smtp.eu.mailgun.org:587"
 ARG SMTP_AUTH_USER="postmaster@mg.sitepilot.io"
 ARG SMTP_AUTH_PASSWORD=""
 
-ARG WEBSERVER_USER_NAME=sitepilot
 ARG WEBSERVER_USER_ID=1000
 ARG WEBSERVER_USER_GID=1000
+ARG WEBSERVER_USER_NAME=sitepilot
 ARG WEBSERVER_DOCROOT=/var/www/html
 ARG WEBSERVER_SERVER_NAME=webserver
 ARG WEBSERVER_SSL_CERT=/sitepilot/conf/cert/default.crt
@@ -116,8 +116,6 @@ RUN addgroup --gid "$WEBSERVER_USER_GID" "$WEBSERVER_USER_NAME" \
     --no-create-home \
     --uid "$WEBSERVER_USER_ID" \
     "$WEBSERVER_USER_NAME"
-
-USER $WEBSERVER_USER_NAME
 
 # Expose ports
 EXPOSE 80
