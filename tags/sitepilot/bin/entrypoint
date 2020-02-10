@@ -30,17 +30,22 @@ file_env() {
 log "Creating required directories..."
 
 folders=("/run/secrets" "/tmp/lshttpd" "/usr/local/lsws/conf/vhosts/app" "/var/www/html" "/var/www/logs" "/var/www/tmp")
-
 for i in "${folders[@]}"
 do
    log "Creating folder $i..."
    mkdir -p $i
 done
 
-touch $SMTP_AUTH_USER_FILE
+if [ ! -f "$SMTP_AUTH_USER_FILE" ]; then 
+    log "Creating empty auth file: $SMTP_AUTH_USER_FILE..."
+    touch $SMTP_AUTH_USER_FILE
+fi
 file_env 'SMTP_AUTH_USER'
 
-touch $SMTP_AUTH_PASSWORD_FILE
+if [ ! -f "$SMTP_AUTH_PASSWORD_FILE" ]; then 
+    log "Creating empty auth file: $SMTP_AUTH_PASSWORD_FILE..."
+    touch $SMTP_AUTH_PASSWORD_FILE
+fi
 file_env 'SMTP_AUTH_PASSWORD'
 
 log "Generating configuration files..."
