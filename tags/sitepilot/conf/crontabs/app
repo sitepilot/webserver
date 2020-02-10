@@ -1,2 +1,2 @@
-* * * * * /usr/local/bin/php /var/www/html/wp-cron.php >> /var/www/logs/cron.log 2>&1
+*/15 * * * * /usr/local/bin/php /var/www/html/wp-cron.php >> /var/www/logs/cron.log 2>&1
 59 23 * * * rm -rf /var/www/logs/cron.log && touch /var/www/logs/cron.log

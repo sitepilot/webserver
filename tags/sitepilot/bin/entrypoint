@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 log() {
     echo "[sitepilot] $1"
 }
@@ -11,17 +11,18 @@ generate() {
 }
 
 log "Creating required directories..."
-declare -a folders=("/tmp/lshttpd" "/usr/local/lsws/conf/vhosts/app" "/var/www/html" "/var/www/logs" "/var/www/tmp")
+
+folders=("/tmp/lshttpd" "/usr/local/lsws/conf/vhosts/app" "/var/www/html" "/var/www/logs" "/var/www/tmp")
+
 for i in "${folders[@]}"
 do
    log "Creating folder $i..."
-   [ ! -d "$i" ] mkdir -p $i
+   mkdir -p $i
 done
 
 log "Generating configuration files..."
 generate /sitepilot/conf/webserver/httpd_config.conf /usr/local/lsws/conf/httpd_config.conf
 generate /sitepilot/conf/webserver/vhconf.conf /usr/local/lsws/conf/vhosts/app/vhconf.conf
-# generate /sitepilot/conf/webserver/sitepilot.ini /usr/local/lsws/lsphp74/etc/php/7.4/mods-available/00-sitepilot.ini
 generate /sitepilot/conf/ssmtp/ssmtp.conf /etc/ssmtp/ssmtp.conf
 
 log "Updating user ID and GID..."

@@ -4,13 +4,13 @@ main() {
   # Dump environment
   export > /env
 
-  echo "Starting runit"
+  echo "[sitepilot] Starting runit"
   /sitepilot/bin/runsvdir-start &
   wait "$!"
 }
 
 onterm() {
-  echo "Exiting..."
+  echo "[sitepilot] Exiting..."
   pkill -SIGHUP runsvdir-start
   exit $?
 }
