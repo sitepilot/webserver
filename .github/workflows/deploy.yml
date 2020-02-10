@@ -1,10 +1,6 @@
 name: deploy
 
-on:
-  push:
-    branches:
-    - master
-    - github-actions
+on: push
 
 jobs:
 
@@ -17,9 +13,9 @@ jobs:
     - name: Build and deploy the Docker image
       run: |
         echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-        docker build . --file Dockerfile --tag sitepilot/webserver:latest
-        docker push sitepilot/webserver:latest
+        docker build . --file Dockerfile --tag sitepilot/webserver:${GITHUB_REF##*/}
+        docker push sitepilot/webserver:${GITHUB_REF##*/}
         # Build development image
-        docker build -t sitepilot/webserver:dev-latest --build-arg WEBSERVER_FROM_IMAGE=sitepilot/webserver:latest -f DockerfileDev .
-        docker push sitepilot/webserver:dev-latest
+        docker build -t sitepilot/webserver:dev-${GITHUB_REF##*/} --build-arg WEBSERVER_FROM_IMAGE=sitepilot/webserver:${GITHUB_REF##*/} -f DockerfileDev .
+        docker push sitepilot/webserver:dev-${GITHUB_REF##*/}
 
