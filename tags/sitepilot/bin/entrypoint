@@ -14,7 +14,7 @@ log "Generating configuration files..."
 mkdir -p /usr/local/lsws/conf/vhosts/app 
 generate /sitepilot/conf/webserver/httpd_config.conf /usr/local/lsws/conf/httpd_config.conf
 generate /sitepilot/conf/webserver/vhconf.conf /usr/local/lsws/conf/vhosts/app/vhconf.conf
-generate /sitepilot/conf/webserver/sitepilot.ini /usr/local/lsws/lsphp72/etc/php/7.2/mods-available/00-sitepilot.ini
+generate /sitepilot/conf/webserver/sitepilot.ini /usr/local/lsws/lsphp74/etc/php/7.4/mods-available/00-sitepilot.ini
 
 log "Updating user ID and GID..."
 groupmod -g $WEBSERVER_USER_GID $WEBSERVER_USER_NAME

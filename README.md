@@ -1,4 +1,4 @@
-# Web Server (Openlitespeed with PHP7.2)
+# Web Server (Openlitespeed with PHP7.4)
 
 [![Actions Status](https://github.com/sitepilot/webserver/workflows/deploy/badge.svg)](https://github.com/sitepilot/webserver/actions)
 [![](https://images.microbadger.com/badges/version/sitepilot/webserver.svg)](https://cloud.docker.com/u/sitepilot/repository/docker/sitepilot/webserver)
@@ -6,12 +6,11 @@
 
 ## Installed software
 * Openlitespeed 
-* LSPHP 7.2
+* LSPHP 7.4
 * Composer
 * PHPunit
 * WPCLI
-* Certbot (Let's Encrypt)
-
+  
 ## Configuration
 
 ### Images

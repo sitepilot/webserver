@@ -7,7 +7,7 @@ LABEL org.label-schema.vendor="Sitepilot" \
       org.label-schema.url="https://sitepilot.io"
 
 # Build arguments
-ARG PHP_VER="72"
+ARG PHP_VER="74"
 ARG PHP_VER=$PHP_VER
 ARG PHP_MEMORY_LIMIT=256M
 ARG PHP_UPLOAD_MAX_FILESIZE=32M
@@ -58,7 +58,6 @@ ARG DEPS="\
         runit \
         nano \
         perl \
-        certbot \
         cron \
         ssmtp \
 "

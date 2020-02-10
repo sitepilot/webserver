@@ -1,4 +1,4 @@
 #!/bin/sh
 
 exec 2>&1
-exec su-exec $WEBSERVER_USER_NAME /usr/local/lsws/lsphp72/bin/lsphp -b *:3000
+exec su-exec $WEBSERVER_USER_NAME /usr/local/lsws/lsphp74/bin/lsphp -b *:3000
