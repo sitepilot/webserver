@@ -134,7 +134,7 @@ USER $WEBSERVER_USER_NAME
 VOLUME ["/var/www/html", "/var/www/log"]
 
 # Set entrypoint
-ENTRYPOINT ["sudo /sitepilot/bin/entrypoint"]
+ENTRYPOINT ["sudo", "/sitepilot/bin/entrypoint"]
 
 # Start services
-CMD ["sudo /sitepilot/bin/runit-wrapper"]
+CMD ["sudo", "/sitepilot/bin/runit-wrapper"]
