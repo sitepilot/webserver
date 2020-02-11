@@ -12,6 +12,7 @@ jobs:
     - uses: actions/checkout@v1
     - name: Build and deploy the Docker image
       run: |
+        if [[ ${GITHUB_REF##*/} = "master" ]]; then export DOCKER_TAG=latest; else export DOCKER_TAG=${GITHUB_REF##*/}; fi
         echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-        docker build . --file Dockerfile --tag sitepilot/webserver:${GITHUB_REF##*/}
-        docker push sitepilot/webserver:${GITHUB_REF##*/}
+        docker build . --file Dockerfile --tag sitepilot/webserver:$DOCKER_TAG
+        docker push sitepilot/webserver:$DOCKER_TAG
