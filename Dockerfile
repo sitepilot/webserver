@@ -127,4 +127,4 @@ VOLUME ["/var/www"]
 ENTRYPOINT ["sudo", "-E", "/sitepilot/bin/entrypoint"]
 
 # Start services
-CMD ["sudo", "-E", "/sitepilot/bin/runit-wrapper"]
+CMD ["/sitepilot/bin/runit-wrapper"]

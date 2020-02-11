@@ -1,17 +1,18 @@
-#!/bin/sh
+#!/bin/bash
 
 main() {
-  # Dump environment
   export > /env
 
+  trap "onterm" SIGINT SIGTERM 
+
   echo "[INFO] Starting runit"
-  /sitepilot/bin/runsvdir-start &
+  sudo /sitepilot/bin/runsvdir-start &
   wait "$!"
 }
 
 onterm() {
   echo "[INFO] Exiting..."
-  pkill -SIGHUP runsvdir-start
+  sudo pkill -SIGHUP runsvdir-start
   exit $?
 }
 
