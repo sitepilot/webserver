@@ -25,8 +25,8 @@ ENV PHP_LSAPI_CHILDREN=10
 
 ENV SMTP_DOMAIN="mg.sitepilot.io"
 ENV SMTP_SERVER="smtp.eu.mailgun.org:587"
-ENV SMTP_AUTH_USER_FILE="/run/secrets/smtp_auth_user"
-ENV SMTP_AUTH_PASSWORD_FILE="/run/secrets/smtp_auth_password"
+ENV SMTP_AUTH_USER_FILE="/sitepilot/secrets/smtp_auth_user"
+ENV SMTP_AUTH_PASSWORD_FILE="/sitepilot/secrets/smtp_auth_password"
 
 ENV WEBSERVER_USER_NAME=$WEBSERVER_USER_NAME
 ENV WEBSERVER_USER_ID=$WEBSERVER_USER_ID
@@ -35,6 +35,7 @@ ENV WEBSERVER_SERVER_NAME="webserver"
 ENV WEBSERVER_SSL_CERT="/sitepilot/conf/cert/default.crt"
 ENV WEBSERVER_SSL_KEY="/sitepilot/conf/cert/default.key"
 ENV WEBSERVER_TRUSTED_IPS="10.133.0.0/16T, 10.244.0.0/16T"
+ENV WEBSERVER_CACHE="off"
 
 ENV WP_INSTALL="no"
 
@@ -126,4 +127,4 @@ VOLUME ["/var/www"]
 ENTRYPOINT ["sudo", "-E", "/sitepilot/bin/entrypoint"]
 
 # Start services
-CMD ["sudo", "-E", "/sitepilot/bin/runit-wrapper"]
+CMD ["/sitepilot/bin/runit-wrapper"]

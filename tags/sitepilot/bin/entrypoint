@@ -1,6 +1,18 @@
 #!/bin/bash
+
+# ==================================
+# FUNCTIONS
+# ==================================
 log() {
-    echo "[sitepilot] $1"
+    echo "[INFO] $1"
+}
+
+logWarning() {
+    echo "[WARNING] $1"
+}
+
+logError() {
+    echo "[ERROR] $1"
 }
 
 generate() {
@@ -10,7 +22,7 @@ generate() {
     cat $SOURCE_FILE | perl -p -e 's/\$\{([^}]+)\}/defined $ENV{$1} ? $ENV{$1} : $&/eg' > $DEST_FILE
 }
 
-file_env() {
+fileEnv() {
 	local var="$1"
 	local fileVar="${var}_FILE"
 	local def="${2:-}"
@@ -27,32 +39,58 @@ file_env() {
 	unset "$fileVar"
 }
 
-log "Creating required directories..."
+log "Configuring webserver..."
 
-folders=("/run/secrets" "/tmp/lshttpd" "/usr/local/lsws/conf/vhosts/app" "/var/www/html" "/var/www/logs" "/var/www/tmp")
+# ==================================
+# DIRECTORIES
+# ==================================
+folders=("/tmp/lshttpd" "/usr/local/lsws/conf/vhosts/app" "/var/www/html" "/var/www/logs" "/var/www/tmp")
 for i in "${folders[@]}"
 do
-   log "Creating folder $i..."
-   mkdir -p $i
+   if [[ ! -d $i ]]; then 
+    log "Creating folder $i..."
+    mkdir -p $i
+   fi
 done
 
-if [ ! -f "$SMTP_AUTH_USER_FILE" ]; then 
-    log "Creating empty auth file: $SMTP_AUTH_USER_FILE..."
-    touch $SMTP_AUTH_USER_FILE
+# ==================================
+# ENVIRONMENT / SECRETS
+# ==================================
+if [ -f "$SMTP_AUTH_USER_FILE" ]; then 
+    log "Loading SMTP auth user..."
+    fileEnv 'SMTP_AUTH_USER'
+else 
+    logWarning "No SMTP auth user was loaded..."
+    SMTP_AUTH_USER=""
 fi
-file_env 'SMTP_AUTH_USER'
 
-if [ ! -f "$SMTP_AUTH_PASSWORD_FILE" ]; then 
-    log "Creating empty auth file: $SMTP_AUTH_PASSWORD_FILE..."
-    touch $SMTP_AUTH_PASSWORD_FILE
+if [ -f "$SMTP_AUTH_PASSWORD_FILE" ]; then 
+    log "Loading SMTP auth password..."
+    fileEnv 'SMTP_AUTH_PASSWORD'
+else 
+    logWarning "No SMTP auth password was loaded..."
+    SMTP_AUTH_PASSWORD=""
 fi
-file_env 'SMTP_AUTH_PASSWORD'
 
+if [[ $WEBSERVER_CACHE = "on" ]]; then 
+    log "Enable webserver cache..."
+    export WEBSERVER_CACHE_ENABLED="1"
+else 
+    log "Disable webserver cache..."
+    export WEBSERVER_CACHE_ENABLED="0"
+fi
+
+# ==================================
+# GENERATE CONFIGURATION FILES
+# ==================================
 log "Generating configuration files..."
 generate /sitepilot/conf/webserver/httpd_config.conf /usr/local/lsws/conf/httpd_config.conf
 generate /sitepilot/conf/webserver/vhconf.conf /usr/local/lsws/conf/vhosts/app/vhconf.conf
 generate /sitepilot/conf/ssmtp/ssmtp.conf /etc/ssmtp/ssmtp.conf
 
+# ==================================
+# WORDPRESS
+# ==================================
 if [[ $WP_INSTALL = "yes" ]]; then
     if [ ! -f /var/www/html/index.php ]; then 
         log "Installing WordPress..."
@@ -62,6 +100,9 @@ if [[ $WP_INSTALL = "yes" ]]; then
     fi
 fi
 
+# ==================================
+# PERMISSIONS
+# ==================================
 log "Updating user ID and GID..."
 groupmod -g $WEBSERVER_USER_GID $WEBSERVER_USER_NAME
 usermod -u $WEBSERVER_USER_ID $WEBSERVER_USER_NAME
@@ -71,7 +112,9 @@ chown -R $WEBSERVER_USER_NAME:$WEBSERVER_USER_NAME /var/www
 chown -R $WEBSERVER_USER_NAME:$WEBSERVER_USER_NAME /tmp/lshttpd
 chown -R lsadm:lsadm /usr/local/lsws/conf
 
-# Start cronjobs
+# ==================================
+# CRONJOBS
+# ==================================
 CRONFILE=/sitepilot/conf/crontabs/app
 if test -f "$CRONFILE"; then
     log "Loading crontab ($CRONFILE)..."
