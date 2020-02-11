@@ -74,10 +74,10 @@ fi
 
 if [[ $WEBSERVER_CACHE = "on" ]]; then 
     log "Enable webserver cache..."
-    WEBSERVER_CACHE_ENABLED="1"
+    export WEBSERVER_CACHE_ENABLED="1"
 else 
     log "Disable webserver cache..."
-    WEBSERVER_CACHE_ENABLED="1"
+    export WEBSERVER_CACHE_ENABLED="0"
 fi
 
 # ==================================
