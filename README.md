@@ -16,8 +16,10 @@
 ### Images
 * `sitepilot/webserver:latest` for production ready Docker image.
 
-### Environment variables
+### Environment Variables
 Use the environment variables below to change the web server and PHP settings.
+
+#### Webserver
 
 | Name | Description|
 |------|------------|
@@ -28,15 +30,27 @@ Use the environment variables below to change the web server and PHP settings.
 |WEBSERVER_SSL_KEY|Change the default web server ssl key, default: `/sitepilot/conf/cert/default.key`| 
 |WEBSERVER_TRUSTED_IPS|Change the web server trusted IPS (when behind a proxy), default: `10.133.0.0/16T, 10.244.0.0/16T`|
 |WEBSERVER_CACHE|Enable or disable the Litespeed cache, default: `off`|
+
+#### PHP
+| Name | Description|
+|------|------------|
 |PHP_TIMEZONE|Change the PHP timezone, default: `Europe\Amsterdam`|
 |PHP_MEMORY_LIMIT|Change the PHP memory limit, default: `256M`|
 |PHP_POST_MAX_SIZE|Change the PHP maximum post size, default `64M`|
 |PHP_UPLOAD_MAX_FILESIZE|Change the PHP maximum upload filesize, default `32M`|
 |PHP_DISPLAY_ERRORS|Display PHP (programming) errors, default: `on`|
+
+#### SMTP
+| Name | Description|
+|------|------------|
 |SMTP_DOMAIN|The address where the mail appears to come from for user authentication, default `mg.sitepilot.io`|
 |SMTP_SERVER|The address of the SMTP server, default `smtp.eu.mailgun.org:587`|
 |SMTP_AUTH_USER_FILE|Load SMTP user from a docker secrets file, default `/sitepilot/secrets/smtp_auth_user`|
 |SMTP_AUTH_PASSWORD_FILE|Load SMTP password from a docker secrets file, default `/sitepilot/secrets/smtp_auth_password`|
+
+#### WordPress
+| Name | Description|
+|------|------------|
 |WP_INSTALL|Install WordPress (if not already installed), default `no`|
 
 ### Ports
