@@ -14,8 +14,10 @@ services:
       WEBSERVER_USER_GID: 1000
       WP_INSTALL: "yes"
     secrets:
-      - smtp_auth_user
-      - smtp_auth_password
+      - source: smtp_auth_user
+        target: "/sitepilot/secrets/smtp_auth_user"
+      - source: smtp_auth_password
+        target: "/sitepilot/secrets/smtp_auth_password"
 
 secrets:
   smtp_auth_user:
